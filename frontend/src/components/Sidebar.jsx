@@ -13,37 +13,43 @@ const EXAMPLE_GOALS = [
 
 const MODULES = [
   { icon: "⚡", label: "Process Generator", active: true },
-  { icon: "📋", label: "Document Library", active: false },
-  { icon: "🗺️", label: "State Navigator", active: false },
-  { icon: "📊", label: "Compliance Tracker", active: false },
+  { icon: "📋", label: "Document Library", active: true },
+  { icon: "🗺️", label: "State Navigator", active: true },
+  { icon: "📊", label: "Compliance Tracker", active: true },
 ]
 
-export default function Sidebar({ onExampleClick, currentGoal }) {
+export default function Sidebar({ onExampleClick, currentGoal, activeModule, onModuleChange }) {
   return (
     <aside className="fixed left-0 top-14 bottom-0 w-64 bg-ink-950 border-r border-ink-800 overflow-y-auto flex flex-col">
       {/* Navigation */}
       <div className="p-4 border-b border-ink-800">
         <p className="text-xs font-mono text-ink-500 uppercase tracking-wider mb-3">Modules</p>
         <nav className="space-y-1">
-          {MODULES.map((mod) => (
-            <button
-              key={mod.label}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all
-                ${mod.active
-                  ? 'bg-saffron-500/10 text-saffron-400 border border-saffron-500/20'
-                  : 'text-ink-400 hover:text-ink-200 hover:bg-ink-800 opacity-50 cursor-not-allowed'
-                }`}
-              disabled={!mod.active}
-            >
-              <span>{mod.icon}</span>
-              <span className="font-medium">{mod.label}</span>
-              {mod.active && (
-                <span className="ml-auto badge bg-saffron-500/10 text-saffron-500 text-[10px] px-1.5 py-0.5">
-                  Active
-                </span>
-              )}
-            </button>
-          ))}
+          {MODULES.map((mod) => {
+            const isCurrent = activeModule === mod.label;
+            return (
+              <button
+                key={mod.label}
+                onClick={() => mod.active && onModuleChange && onModuleChange(mod.label)}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all
+                  ${!mod.active
+                    ? 'text-ink-400 opacity-40 cursor-not-allowed'
+                    : isCurrent
+                      ? 'bg-saffron-500/10 text-saffron-400 border border-saffron-500/20'
+                      : 'text-ink-400 hover:text-ink-200 hover:bg-ink-800 border border-transparent'
+                  }`}
+                disabled={!mod.active}
+              >
+                <span>{mod.icon}</span>
+                <span className="font-medium">{mod.label}</span>
+                {isCurrent && mod.active && (
+                  <span className="ml-auto badge bg-saffron-500/10 text-saffron-500 text-[10px] px-1.5 py-0.5">
+                    Active
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </nav>
       </div>
 

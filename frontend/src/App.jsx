@@ -5,6 +5,9 @@ import SearchBar from './components/SearchBar'
 import ResultDashboard from './components/ResultDashboard'
 import LoadingState from './components/LoadingState'
 import EmptyState from './components/EmptyState'
+import DocumentLibrary from './components/DocumentLibrary'
+import StateNavigator from './components/StateNavigator'
+import ComplianceTracker from './components/ComplianceTracker'
 import { generateProcess } from './api/index'
 
 export default function App() {
@@ -12,12 +15,14 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [currentGoal, setCurrentGoal] = useState('')
+  const [activeModule, setActiveModule] = useState('Process Generator')
 
   const handleSubmit = async (goal) => {
     setLoading(true)
     setError(null)
     setResult(null)
     setCurrentGoal(goal)
+    setActiveModule('Process Generator')
 
     try {
       const data = await generateProcess(goal)
@@ -47,7 +52,12 @@ export default function App() {
 
       <div className="flex pt-14">
         {/* Sidebar */}
-        <Sidebar onExampleClick={handleExampleClick} currentGoal={currentGoal} />
+        <Sidebar
+          onExampleClick={handleExampleClick}
+          currentGoal={currentGoal}
+          activeModule={activeModule}
+          onModuleChange={setActiveModule}
+        />
 
         {/* Main Content */}
         <main className="ml-64 flex-1 min-h-[calc(100vh-3.5rem)] flex flex-col">
@@ -60,49 +70,63 @@ export default function App() {
             </p>
           </div>
 
-          <div className="flex-1 p-6 max-w-5xl w-full mx-auto">
-            {/* Search Section */}
-            <div className="mb-8">
-              <div className="mb-2">
-                <h2 className="font-display font-bold text-white text-xl">
-                  Governance Process Intelligence
-                </h2>
-                <p className="text-xs text-ink-500 mt-1">
-                  Describe your goal and get a complete procedural roadmap for Indian government processes
-                </p>
-              </div>
-              <div className="mt-4">
-                <SearchBar onSubmit={handleSubmit} loading={loading} />
-              </div>
-            </div>
+          <div className="flex-1 p-6 w-full mx-auto" style={{ maxWidth: activeModule === 'Process Generator' ? '64rem' : '100%' }}>
 
-            {/* Content Area */}
-            {loading && <LoadingState />}
-
-            {!loading && error && (
-              <div className="card border-red-800/50 bg-red-950/20">
-                <div className="flex items-start gap-3">
-                  <span className="text-red-400 text-xl">✕</span>
-                  <div>
-                    <p className="font-semibold text-red-300 text-sm">Error</p>
-                    <p className="text-red-400/80 text-sm mt-1">{error}</p>
-                    <button
-                      onClick={() => currentGoal && handleSubmit(currentGoal)}
-                      className="mt-3 px-4 py-1.5 bg-red-900/50 hover:bg-red-900 border border-red-800 
-                        text-red-300 text-xs rounded-lg transition-all"
-                    >
-                      Retry
-                    </button>
+            {/* ── Process Generator ── */}
+            {activeModule === 'Process Generator' && (
+              <>
+                <div className="mb-8">
+                  <div className="mb-2">
+                    <h2 className="font-display font-bold text-white text-xl">
+                      Governance Process Intelligence
+                    </h2>
+                    <p className="text-xs text-ink-500 mt-1">
+                      Describe your goal and get a complete procedural roadmap for Indian government processes
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <SearchBar onSubmit={handleSubmit} loading={loading} />
                   </div>
                 </div>
-              </div>
+
+                {loading && <LoadingState />}
+
+                {!loading && error && (
+                  <div className="card border-red-800/50 bg-red-950/20">
+                    <div className="flex items-start gap-3">
+                      <span className="text-red-400 text-xl">✕</span>
+                      <div>
+                        <p className="font-semibold text-red-300 text-sm">Error</p>
+                        <p className="text-red-400/80 text-sm mt-1">{error}</p>
+                        <button
+                          onClick={() => currentGoal && handleSubmit(currentGoal)}
+                          className="mt-3 px-4 py-1.5 bg-red-900/50 hover:bg-red-900 border border-red-800
+                            text-red-300 text-xs rounded-lg transition-all"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {!loading && !error && result && (
+                  <ResultDashboard data={result} goal={currentGoal} />
+                )}
+
+                {!loading && !error && !result && <EmptyState />}
+              </>
             )}
 
-            {!loading && !error && result && (
-              <ResultDashboard data={result} goal={currentGoal} />
-            )}
+            {/* ── Document Library ── */}
+            {activeModule === 'Document Library' && <DocumentLibrary />}
 
-            {!loading && !error && !result && <EmptyState />}
+            {/* ── State Navigator ── */}
+            {activeModule === 'State Navigator' && <StateNavigator />}
+
+            {/* ── Compliance Tracker ── */}
+            {activeModule === 'Compliance Tracker' && <ComplianceTracker />}
+
           </div>
 
           {/* Footer */}
