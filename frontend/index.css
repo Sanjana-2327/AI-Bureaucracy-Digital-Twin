@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-ink-950 text-ink-100 font-sans;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #102a43;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #486581;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #627d98;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-ink-900 border border-ink-700 rounded-xl p-6;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium font-mono;
+  }
+
+  .stage-connector {
+    position: relative;
+  }
+  .stage-connector::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 52px;
+    bottom: -16px;
+    width: 2px;
+    background: linear-gradient(to bottom, #486581, transparent);
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, #243b53 25%, #334e68 50%, #243b53 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pulse-dot {
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+}
